@@ -1,8 +1,7 @@
 package com.sheldon.rest.resources;
 
-import com.sheldon.rest.common.domain.Product;
 import com.sheldon.rest.common.representation.ProductRepresentation;
-import com.sheldon.rest.common.validation.group.ProductGroups;
+import com.sheldon.rest.common.validation.groups.ProductGroups;
 import com.sheldon.rest.ejb.ProductEJB;
 import com.sheldon.rest.mapper.ProductMapper;
 

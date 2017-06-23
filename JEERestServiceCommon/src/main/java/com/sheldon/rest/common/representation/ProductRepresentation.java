@@ -1,7 +1,9 @@
 package com.sheldon.rest.common.representation;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sheldon.rest.common.validation.group.ProductGroups;
+import com.sheldon.rest.common.validation.annotations.Currency;
+import com.sheldon.rest.common.validation.annotations.StringNotNullOrEmpty;
+import com.sheldon.rest.common.validation.groups.ProductGroups;
 import org.jboss.resteasy.plugins.providers.atom.Link;
 
 import javax.validation.constraints.NotNull;
@@ -14,15 +16,15 @@ import java.util.List;
 public class ProductRepresentation extends BaseRepresentation {
     @JsonIgnore
     private BigInteger id;
-    @NotNull(groups = ProductGroups.DeleteProductGroup.class)
+    @StringNotNullOrEmpty(groups = ProductGroups.DeleteProductGroup.class)
     private String sku;
-    @NotNull(groups = ProductGroups.AddProductGroup.class)
+    @StringNotNullOrEmpty(groups = ProductGroups.AddProductGroup.class)
     private String name;
-    @NotNull(groups = ProductGroups.AddProductGroup.class)
+    @StringNotNullOrEmpty(groups = ProductGroups.AddProductGroup.class)
     private String size;
-    @NotNull(groups = ProductGroups.AddProductGroup.class)
+    @Currency(groups = ProductGroups.AddProductGroup.class)
     private Double cost;
-    @NotNull(groups = ProductGroups.AddProductGroup.class)
+    @StringNotNullOrEmpty(groups = ProductGroups.AddProductGroup.class)
     private String imgUrl;
 
     public ProductRepresentation() {

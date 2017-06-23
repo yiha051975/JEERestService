@@ -13,6 +13,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * Created by Sheld on 6/20/2017.
+ * Prevent Jackson from serialize any null values to JSON
  */
 @Provider
 @Produces(MediaType.APPLICATION_JSON)

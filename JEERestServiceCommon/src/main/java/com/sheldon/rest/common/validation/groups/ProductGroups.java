@@ -1,4 +1,4 @@
-package com.sheldon.rest.common.validation.group;
+package com.sheldon.rest.common.validation.groups;
 
 /**
  * Created by Sheld on 6/21/2017.
