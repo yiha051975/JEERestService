@@ -6,16 +6,12 @@ import com.sheldon.rest.ejb.ProductEJB;
 import com.sheldon.rest.mapper.ProductMapper;
 
 import javax.ejb.EJB;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.*;
 import java.util.UUID;
 
 /**
@@ -27,7 +23,7 @@ public class ProductResource {
     @EJB
     private ProductEJB productEJB;
     @Context
-    private HttpServletRequest request;
+    private Request request;
     @Context
     private UriInfo uriInfo;
 
@@ -40,7 +36,27 @@ public class ProductResource {
     @GET
     @Path("/getProduct/{sku}")
     public Response getProduct(@NotNull @PathParam("sku") String sku) {
-        return Response.ok().entity(ProductMapper.mapToProductRepresentation(productEJB.getProduct(sku), uriInfo)).build();
+        ProductRepresentation productRepresentation = ProductMapper.mapToProductRepresentation(productEJB.getProduct(sku), uriInfo);
+        String etagCode = ProductMapper.generateEntityTag(productRepresentation);
+        EntityTag entityTag = new EntityTag(etagCode);
+
+        Response.ResponseBuilder evaluationResultBuilder = request.evaluatePreconditions(entityTag);
+
+        if (evaluationResultBuilder == null) {
+            evaluationResultBuilder = Response.ok(productRepresentation, MediaType.APPLICATION_JSON);
+//            evaluationResultBuilder.tag(entityTag);
+        } else {
+            evaluationResultBuilder.status(304);
+        }
+
+        CacheControl cacheControl = new CacheControl();
+        cacheControl.setPrivate(true);
+        cacheControl.setMaxAge(120);
+//        cacheControl.setMustRevalidate(true);
+//        cacheControl.setNoStore(true);
+        evaluationResultBuilder.cacheControl(cacheControl);
+
+        return evaluationResultBuilder.build();
     }
 
     @POST

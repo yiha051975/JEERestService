@@ -56,6 +56,29 @@ public class ProductMapper {
         return productRepresentations;
     }
 
+    public static String generateEntityTag(ProductRepresentation productRepresentation) {
+        if (null == productRepresentation) {
+            return null;
+        }
+
+        Integer entityTagCode = 0;
+
+        if (null != productRepresentation.getName()) {
+            entityTagCode += productRepresentation.getName().hashCode();
+        }
+        if (null != productRepresentation.getSize()) {
+            entityTagCode += productRepresentation.getSize().hashCode();
+        }
+        if (null != productRepresentation.getCost()) {
+            entityTagCode += productRepresentation.getCost().hashCode();
+        }
+        if (null != productRepresentation.getImgUrl()) {
+            entityTagCode += productRepresentation.getImgUrl().hashCode();
+        }
+
+        return Integer.toString(entityTagCode);
+    }
+
     private static Link getProductLink(Product product, UriInfo uriInfo) {
         Link link = new Link();
         link.setRel("self");
