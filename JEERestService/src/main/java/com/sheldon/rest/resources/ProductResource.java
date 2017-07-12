@@ -6,6 +6,7 @@ import com.sheldon.rest.ejb.ProductEJB;
 import com.sheldon.rest.mapper.ProductMapper;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.groups.ConvertGroup;
@@ -26,6 +27,8 @@ public class ProductResource {
     private Request request;
     @Context
     private UriInfo uriInfo;
+    @Context
+    private HttpServletRequest httpServletRequest;
 
     @GET
     @Path("/getAllProducts")
@@ -35,9 +38,9 @@ public class ProductResource {
 
     @GET
     @Path("/getProduct/{sku}")
-    public Response getProduct(@NotNull @PathParam("sku") String sku) {
+    public Response getProduct(@NotNull @PathParam("sku") String sku, @HeaderParam("Cache-Control")CacheControl cacheControl) {
         ProductRepresentation productRepresentation = ProductMapper.mapToProductRepresentation(productEJB.getProduct(sku), uriInfo);
-        String etagCode = ProductMapper.generateEntityTag(productRepresentation);
+        String etagCode = Integer.toString(productRepresentation.hashCode());
         EntityTag entityTag = new EntityTag(etagCode);
 
         Response.ResponseBuilder evaluationResultBuilder = request.evaluatePreconditions(entityTag);
@@ -49,11 +52,13 @@ public class ProductResource {
             evaluationResultBuilder.status(304);
         }
 
-        CacheControl cacheControl = new CacheControl();
-        cacheControl.setPrivate(true);
-        cacheControl.setMaxAge(120);
+        if (null == cacheControl) {
+            cacheControl = new CacheControl();
+            cacheControl.setPrivate(true);
+            cacheControl.setMaxAge(120);
 //        cacheControl.setMustRevalidate(true);
 //        cacheControl.setNoStore(true);
+        }
         evaluationResultBuilder.cacheControl(cacheControl);
 
         return evaluationResultBuilder.build();
