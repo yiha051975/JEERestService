@@ -47,7 +47,7 @@ public class ProductResource {
 
         if (evaluationResultBuilder == null) {
             evaluationResultBuilder = Response.ok(productRepresentation, MediaType.APPLICATION_JSON);
-//            evaluationResultBuilder.tag(entityTag);
+            evaluationResultBuilder.tag(entityTag);
         } else {
             evaluationResultBuilder.status(304);
         }
