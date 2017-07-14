@@ -1,8 +1,8 @@
-package com.sheldon.rest.mapper;
+package com.sheldon.rest.common.mapper;
 
+import com.sheldon.rest.common.constants.Constants;
 import com.sheldon.rest.common.domain.Product;
 import com.sheldon.rest.common.representation.ProductRepresentation;
-import com.sheldon.rest.resources.ProductResource;
 import org.jboss.resteasy.plugins.providers.atom.Link;
 
 import javax.ws.rs.core.UriInfo;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Sheld on 6/20/2017.
  */
 public class ProductMapper {
-    public static ProductRepresentation mapToProductRepresentation(Product product, UriInfo uriInfo) {
+    public static ProductRepresentation mapToProductRepresentation(Product product, UriInfo uriInfo, Class clazz) {
         ProductRepresentation productRepresentation = new ProductRepresentation();
 
         productRepresentation.setId(product.getId());
@@ -23,7 +23,7 @@ public class ProductMapper {
         productRepresentation.setCost(product.getCost());
         productRepresentation.setImgUrl(product.getImgUrl());
 
-        Link link = getProductLink(product, uriInfo);
+        Link link = getProductLink(product, uriInfo, clazz);
 
         List<Link> links = new ArrayList<>();
         links.add(link);
@@ -46,20 +46,20 @@ public class ProductMapper {
         return product;
     }
 
-    public static List<ProductRepresentation> mapToProductRepresentations(List<Product> products, UriInfo uriInfo) {
+    public static List<ProductRepresentation> mapToProductRepresentations(List<Product> products, UriInfo uriInfo, Class clazz) {
         List<ProductRepresentation> productRepresentations = new ArrayList<>();
 
         for (Product product : products) {
-            productRepresentations.add(mapToProductRepresentation(product, uriInfo));
+            productRepresentations.add(mapToProductRepresentation(product, uriInfo, clazz));
         }
 
         return productRepresentations;
     }
 
-    private static Link getProductLink(Product product, UriInfo uriInfo) {
+    private static Link getProductLink(Product product, UriInfo uriInfo, Class clazz) {
         Link link = new Link();
         link.setRel("self");
-        link.setHref(uriInfo.getBaseUriBuilder().path(ProductResource.class).path(ProductResource.class, "getProduct").build(product.getSku()));
+        link.setHref(uriInfo.getBaseUriBuilder().path(clazz).path(clazz, Constants.GET_PRODUCT).build(product.getSku()));
 
         return link;
     }
